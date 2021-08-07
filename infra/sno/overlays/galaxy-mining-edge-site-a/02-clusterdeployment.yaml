@@ -1,0 +1,12 @@
+- op: replace
+  path: /metadata/name
+  value: galaxy-mining-edge-site-a-deployment
+- op: replace
+  path: /spec/baseDomain
+  value: telco5glab.us
+- op: replace
+  path: /spec/clusterName
+  value: galaxy-mining-edge-site-a
+- op: replace
+  path: /spec/clusterInstallRef/name
+  value: edge-site-a-ocpsnospoke-aci

@@ -1,0 +1,25 @@
+apiVersion: extensions.hive.openshift.io/v1beta1
+kind: AgentClusterInstall
+metadata:
+  name: ocpsnospoke-aci
+  namespace: open-cluster-management
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  clusterDeploymentRef:
+    name: ocpsnospoke
+  imageSetRef:
+    name: openshift-v4.8.2
+  apiVIP: ""
+  ingressVIP: ""
+  networking:
+    clusterNetwork:
+      - cidr: "10.128.0.0/14"
+        hostPrefix: 23
+    machineNetwork:
+      - cidr: "192.168.2.0/24"
+    serviceNetwork:
+      - "172.30.0.0/16"
+  provisionRequirements:
+    controlPlaneAgents: 1
+  sshPublicKey: ""

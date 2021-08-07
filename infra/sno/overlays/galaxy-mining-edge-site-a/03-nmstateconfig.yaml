@@ -1,0 +1,28 @@
+- op: replace
+  path: /spec/config
+  value: 
+    dns-resolver:
+      config:
+        server:
+        - 192.168.2.1
+    interfaces:
+    - name: enp1s0
+      type: ethernet
+      state: up
+      ipv4:
+        address:
+        - ip: 192.168.2.231
+          prefix-length: 24
+        enabled: true
+    routes:
+      config:
+      - destination: 0.0.0.0/0
+        next-hop-address: 192.168.2.1
+        next-hop-interface: enp1s0
+        table-id: 254
+- op: replace
+  path: /spec/interfaces
+  value:
+      - name: "enp1s0"
+        macAddress: "52:54:00:25:83:a9" 
+

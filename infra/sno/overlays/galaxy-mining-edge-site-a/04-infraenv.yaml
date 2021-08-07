@@ -1,0 +1,9 @@
+- op: replace
+  path: /spec/clusterRef/name
+  value: galaxy-mining-edge-site-a-deployment
+- op: replace
+  path: /spec/clusterRef/namespace
+  value: galaxy-mining
+- op: replace
+  path: /spec/sshAuthorizedKey
+  value: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCyXpnAHTyS0Zf/31VnHM0HiPqNaa1XNfWx4uOzuTyhoazoVkEzWBj5gjOXA1EkhkgpDoe711JcQAXToDQzW0lfPa35VpctKnLG0FCPm+E3GKmNkE/JNIRYKtn9o7oE3gUluonLKPDn/pzrowyoBO+Pc6KE4nOVwQAdE3nqw4JbeKIXAqdLY3BpRf+N0gZwwDUENPj2uxMWsvna1GKsAFGG+1UCSK+wzEzKzhzAF9NVIJyU3Hiq+8xuYbT+UjWjiY/toUO3m9XxxrVo7YJv+jqA0ZmcLkiiZJ8pN8q6d4G3kggZpIb+MrIDLKXDgXBu914yEi57vYiAuDmtTfw/9AhtImbssVNCKVrF3klXSWGrw5VX0jgAnXv4ERIVVI64FrAviub5IEDIU5dWx8Gb8bVGU5FpWloO3CS3d/l14WseL5wc/940qgzBrBXG3iiLDHS/dY+FYrwzuuCyu8VKmRKGEfM1nGwCGqa9RM4oIxkz0Psnrby/DQa6cdFCxZJcL2s= root@telcolab"

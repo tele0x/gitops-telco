@@ -1,0 +1,25 @@
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  name: ocpsnospoke
+  namespace: open-cluster-management
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  baseDomain: telco5glab.us
+  clusterName: ocpsnospoke
+  controlPlaneConfig:
+    servingCertificates: {}
+  installed: false
+  clusterInstallRef:
+    group: extensions.hive.openshift.io
+    kind: AgentClusterInstall
+    name: ocpsnospoke-aci
+    version: v1beta1
+  platform:
+    agentBareMetal:
+      agentSelector:
+        matchLabels:
+          cluster: "spoke"
+  pullSecretRef:
+    name: assisted-deployment-pull-secret

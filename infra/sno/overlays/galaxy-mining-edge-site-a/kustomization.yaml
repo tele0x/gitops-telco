@@ -1,0 +1,36 @@
+bases:
+- ../../base
+
+namespace: galaxy-mining
+namePrefix: edge-site-a-
+
+patchesJson6902:
+- target:
+    version: v1
+    kind: Secret
+    name: assisted-deployment-pull-secret
+  path: 00-pullsecret.yaml
+- target:
+    group: extensions.hive.openshift.io
+    version: v1beta1
+    kind: AgentClusterInstall
+    name: edge-site-a-ocpsnospoke-aci
+  path: 01-agentclusterinstall.yaml
+- target:
+    group: hive.openshift.io
+    version: v1
+    kind: ClusterDeployment
+    name: edge-site-a-ocpsnospoke
+  path: 02-clusterdeployment.yaml
+- target:
+    group: agent-install.openshift.io
+    version: v1beta1
+    kind: NMStateConfig
+    name: edge-site-a-assisted-deployment-nmstate-ocpsnospoke
+  path: 03-nmstateconfig.yaml
+- target:
+    group: agent-install.openshift.io
+    version: v1beta1
+    kind: InfraEnv
+    name: edge-site-a-ocpsnospoke-env
+  path: 04-infraenv.yaml

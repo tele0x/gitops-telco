@@ -1,0 +1,21 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: InfraEnv
+metadata:
+  name: ocpsnospoke-env
+  namespace: open-cluster-management
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-options: Validate=false
+spec:
+  clusterRef:
+    name: ocpsnospoke
+    namespace: open-cluster-management
+  sshAuthorizedKey: ""
+  agentLabelSelector:
+    matchLabels:
+      cluster: "spoke"
+  pullSecretRef:
+    name: assisted-deployment-pull-secret
+  nmStateConfigLabelSelector:
+    matchLabels:
+      cluster-name: nmstate-ocpsnospoke

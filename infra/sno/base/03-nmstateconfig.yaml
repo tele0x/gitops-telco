@@ -1,0 +1,10 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: assisted-deployment-nmstate-ocpsnospoke
+  labels:
+    cluster-name: nmstate-ocpsnospoke
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  config: null

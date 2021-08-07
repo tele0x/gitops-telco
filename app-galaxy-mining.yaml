@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: galaxy-mining-edge-site-a
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: galaxy-mining
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: galaxy-mining/infra/sno/overlays/galaxy-mining-edge-site-a
+    repoURL: https://github.com/tele0x/gitops-telco
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

@@ -1,0 +1,6 @@
+resources:
+- 00-pullsecret.yaml
+- 01-agentclusterinstall.yaml
+- 02-clusterdeployment.yaml
+- 03-nmstateconfig.yaml
+- 04-infraenv.yaml
