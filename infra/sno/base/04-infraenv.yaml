@@ -7,13 +7,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "4"
     argocd.argoproj.io/sync-options: Validate=false
 spec:
+  agentLabelSelector:
+    matchLabels:
+      cluster: "spoke"
   clusterRef:
     name: ocpsnospoke
     namespace: open-cluster-management
   sshAuthorizedKey: ""
-  agentLabelSelector:
-    matchLabels:
-      cluster: "spoke"
   pullSecretRef:
     name: assisted-deployment-pull-secret
   nmStateConfigLabelSelector:

@@ -9,12 +9,12 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: galaxy-mining/infra/sno/overlays/galaxy-mining-edge-site-a
+    path: infra/sno/overlays/galaxy-mining-edge-site-a
     repoURL: https://github.com/tele0x/gitops-telco
-    targetRevision: main
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false
     syncOptions:
     - CreateNamespace=true
