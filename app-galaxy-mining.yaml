@@ -18,3 +18,14 @@ spec:
       selfHeal: false
     syncOptions:
     - CreateNamespace=true
+  ignoreDifferences:
+  - group: agent-install.openshift.io
+    kind: InfraEnv
+    jsonPointers:
+    - /spec/agentLabelSelector
+  ignoreDifferences:
+  - group: extensions.hive.openshift.io
+    kind: AgentClusterInstall
+    jsonPointers:
+    - /spec/apiVIP
+    - /spec/ingressVIP
