@@ -5,18 +5,16 @@ bases:
 namespace: galaxy-mining
 namePrefix: edge-site-a-
 
-
 # generate secret for BMC access
 generatorOptions:
   disableNameSuffixHash: true
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
+  #  annotations:
+  #  argocd.argoproj.io/sync-wave: "5"
 secretGenerator:
 - name: bmc-secret1
   literals:
   - username=admin
   - password=YW1vcmdhbnQK
-
 
 # replace variables in config files
 patchesJson6902:
