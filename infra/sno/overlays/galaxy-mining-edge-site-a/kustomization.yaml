@@ -8,8 +8,8 @@ namePrefix: edge-site-a-
 # generate secret for BMC access
 generatorOptions:
   disableNameSuffixHash: true
-  #annotations:
-  #  argocd.argoproj.io/sync-wave: "5"
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 secretGenerator:
 - name: bmc-secret1
   literals:
