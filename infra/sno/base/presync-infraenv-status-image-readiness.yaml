@@ -9,7 +9,8 @@ annotations:
   argocd.argoproj.io/sync-wave: "6"
 spec:
     containers:
-      - image: registry.redhat.io/openshift4/ose-cli
+      - name: infraenv-status-image-readiness
+        image: registry.redhat.io/openshift4/ose-cli
         command:
           - /bin/bash
           - "-c"
