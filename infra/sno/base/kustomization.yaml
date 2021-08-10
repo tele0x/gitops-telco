@@ -5,4 +5,3 @@ resources:
 - 03-nmstateconfig.yaml
 - 04-infraenv.yaml
 - 05-bmh.yaml
-- presync-infraenv-status-image-readiness.yaml
