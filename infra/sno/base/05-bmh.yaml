@@ -4,7 +4,7 @@ metadata:
   name: edgesno001
   namespace: galaxy-mining
   annotations:
-    argocd.argoproj.io/sync-wave: "8"
+    argocd.argoproj.io/sync-wave: "7"
     inspect.metal3.io: disabled
   labels:
     infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
