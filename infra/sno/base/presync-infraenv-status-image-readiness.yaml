@@ -1,19 +1,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: infraenv-status-image-readiness
+  name: job-infraenv-status-image-readiness
   namespace: galaxy-mining
   annotations:
-    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook: PreSync
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
-    argocd.argoproj.io/sync-wave: "6"
+    argocd.argoproj.io/sync-wave: "7"
 spec:
- template:
-   spec:
-    containers:
-      - name: infraenv-status-image-readiness
-        image: registry.redhat.io/openshift4/ose-cli
-        command:
+  template:
+    spec:
+      containers:
+      - command:
           - /bin/bash
           - "-c"
           - |
@@ -40,3 +38,7 @@ spec:
             fi
 
             EOF
+        name: infraenv-status-image-readiness
+        image: registry.redhat.io/openshift4/ose-cli
+      restartPolicy: Never
+
