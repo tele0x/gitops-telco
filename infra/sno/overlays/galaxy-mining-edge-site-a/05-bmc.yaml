@@ -1,0 +1,13 @@
+- op: replace
+  path: /metadata/labels
+  value: 
+    infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
+- op: replace
+  path: /spec/bmc/address
+  value: redfish-virtualmedia+http://192.168.2.100:8080/redfish/v1/Systems/f39c8610-870a-437b-8363-56edfd791199
+- op: replace
+  path: /spec/bmc/credentialsName
+  value: edge-site-a-bmc-secret1
+- op: replace
+  path: /spec/bootMACAddress
+  value: 52:54:00:25:83:a9

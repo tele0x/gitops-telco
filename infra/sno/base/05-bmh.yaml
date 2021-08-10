@@ -1,0 +1,19 @@
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: edgesno001
+  namespace: galaxy-mining
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  labels:
+    infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
+  annotations:
+    inspect.metal3.io: disabled
+spec:
+  online: true
+  bmc:
+    address: ""
+    credentialsName: bmc-secret1
+    disableCertificateVerification: true
+  bootMACAddress: 52:54:00:25:83:a9
+  automatedCleaningMode: disabled

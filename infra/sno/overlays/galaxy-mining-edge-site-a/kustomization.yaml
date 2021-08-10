@@ -1,9 +1,24 @@
 bases:
 - ../../base
 
+# set namespace and name prefix
 namespace: galaxy-mining
 namePrefix: edge-site-a-
 
+
+# generate secret for BMC access
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+secretGenerator:
+- name: bmc-secret1
+  literals:
+  - username=admin
+  - password=YW1vcmdhbnQK
+
+
+# replace variables in config files
 patchesJson6902:
 - target:
     version: v1
@@ -34,3 +49,9 @@ patchesJson6902:
     kind: InfraEnv
     name: edge-site-a-ocpsnospoke-env
   path: 04-infraenv.yaml
+- target:
+    group: metal3.io
+    version: v1alpha1
+    kind: BareMetalHost
+    name: edge-site-a-edgesno001
+  path: 05-bmc.yaml
