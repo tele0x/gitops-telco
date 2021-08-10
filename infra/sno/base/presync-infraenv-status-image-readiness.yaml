@@ -3,10 +3,10 @@ kind: Pod
 metadata:
   name: infraenv-status-image-readiness
   namespace: galaxy-mining
-annotations:
-  argocd.argoproj.io/hook: PreSync
-  argocd.argoproj.io/hook-delete-policy: HookSucceeded
-  argocd.argoproj.io/sync-wave: "6"
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: "6"
 spec:
     containers:
       - name: infraenv-status-image-readiness
