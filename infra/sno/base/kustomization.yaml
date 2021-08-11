@@ -4,6 +4,6 @@ resources:
 - 02-clusterdeployment.yaml
 - 03-nmstateconfig.yaml
 - 04-infraenv.yaml
-- job-infraenv-image-status-readiness.yaml
+#- job-infraenv-image-status-readiness.yaml
 - 05-bmh.yaml
-- job-monitor-cluster-install.yaml 
+#- job-monitor-cluster-install.yaml 
