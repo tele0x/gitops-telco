@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: job-infraenv-status-image-readiness
+  name: job-infraenv-image-status-readiness
   namespace: galaxy-mining
   annotations:
     argocd.argoproj.io/hook: Sync
@@ -15,30 +15,41 @@ spec:
           - /bin/bash
           - "-c"
           - |
-            /bin/bash -x <<'EOF'
+            /bin/bash <<'EOF'
+            function logc() {
+                txt=$1
+                echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt" 
+            }            
             ct=0
+            infraenv_name=`oc get infraenv -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
             while [[ $ct -le 30 ]]; do
-              if [[ `oc get infraenv edge-site-a-ocpsnospoke-env -n galaxy-mining -o=jsonpath='{.status.conditions[0].type}'` == "ImageCreated" ]]; then
-                echo 'matched'
-                status=0;
+              image_status=`oc get infraenv $infraenv_name -o=jsonpath='{.status.conditions[0].type}'`
+              logc "Check ISO image creation status..."
+              logc "Output: $image_status" 
+              
+              if [[ "$image_status" == "ImageCreated" ]]; then
+                logc "ISO Image successfully created"
+                status=1;
                 break;
               else
-                echo 'not matched'
-                status=1;
+                logc "Image not ready yet.."
+                status=0;
               fi
               sleep 10
               ct=$(($ct+1))
             done
-            if [[ ${status} -eq 0 ]]; then
-              echo 'Success'
+            if [[ ${status} -eq 1 ]]; then
+              logc "ISO Download URL: "
+              oc get infraenv $infraenv_name -o=jsonpath='{.status.isoDownloadURL}' 
               exit 0
             else
-              echo 'Send notification imageCreationFailed'
+              logc "ISO Image creation failed, send notification.."
+              # slack, email etc.. notifications
               exit 1
             fi
 
             EOF
-        name: infraenv-status-image-readiness
+        name: infraenv-status-image-status-readiness
         image: registry.redhat.io/openshift4/ose-cli
       restartPolicy: Never
 

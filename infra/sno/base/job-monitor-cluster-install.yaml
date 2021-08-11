@@ -1,0 +1,127 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-monitor-cluster-install
+  namespace: galaxy-mining
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: "7"
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+          - /bin/bash
+          - "-c"
+          - |
+            /bin/bash <<'EOF'
+            function logc() {
+                txt=$1
+                echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt" 
+            }
+            ct=0
+            install_status=0
+            # get agent name
+            agent_name=`oc get agentclusterinstall -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
+            
+            logc "START Cluster monitor install"
+            logc "============================="
+
+            # Wait 1 hour, timeout if cluster installation is not completed in 1 hour
+            while [[ $ct -le 12 ]]; do
+              
+              # get install state
+              install_status=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.state}'`
+              # get install state details
+              install_status_msg=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.stateInfo}'`
+              
+              case $install_status in
+                
+                insufficient)
+                   logc "Cluster has not sufficient requirements to begin the installation"
+                   ;;
+
+                preparing-for-installation)
+                   logc "Preparing for cluster installation"
+                   ;;
+
+                installing)
+                   logc "Installation in progress.."
+                   logc "Status: $install_status_msg"
+                   ;; 
+
+                installing-pending-user-action)
+                   logc "Installation is pending user action, error occured and stopped the install"
+                   logc "Output: $install_status_msg"
+                   ;;
+
+                installed)
+                   logc "Cluster successfully installed"
+                   install_status=1
+                   break;
+                   ;;
+
+                *)
+                   logc "Status unknow"
+                   logc "Output: `oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.stateInfo}'`"
+                   ;;
+              esac
+
+              if [[ $install_status -eq 1 ]]; then
+                break;
+              fi
+
+              # wait 5 minutes before checking again cluster status
+              logc "Waiting to check cluster status.."
+              sleep 300
+              ct=$(($ct+1))
+            done
+
+            logc "============================="
+            logc "END Cluster monitor install"
+
+            if [[ $install_status -eq 1 ]]; then
+              logc "Cluster installation completed, get kubeconfig and kubeadmin password for the cluster"
+              
+              kubeconfig_url=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/kubeconfig?\2#g'`
+              kubeadmin_url=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/files?file_name=kubeadmin-password\&\2#g'` 
+              
+              # For this PoC we just print the password and kubeconfig in the pod log
+              # Other options would be to send Slack notification or an email with the cluster access info
+              logc "Kubeadmin password: "
+              curl -k -X GET "$kubeadmin_url" 2>/dev/null
+
+              echo -e "\n"
+
+              logc "Kubeconfig: "
+              curl -k -X GET "$kubeconfig_url" 2>/dev/null
+
+              exit 0
+            else
+              logc "Send notification cluster installation failed"
+              # here we can get the detailed logs to troubleshoot why the cluster install failed
+              # cluster events
+              cluster_events=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.eventsURL}'`
+              # logs. note logs are stored in a tar archive
+              cluster_logs=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.logsURL}'`
+              
+              logc "Get cluster install events"
+              curl -k -X GET "$cluster_events"
+
+              logc "Get cluster install logs"
+              curl -k -o logs.tar -X GET "$cluster_logs"
+              tar -xf logs.tar
+              tar -zxvf controller_logs.tar.gz
+              logc "Install logs:"
+              logc "============================="
+              cat assisted-installer*  
+
+              exit 1
+            fi
+
+            EOF
+        name: monitor-cluster-install
+        image: registry.redhat.io/openshift4/ose-cli
+      restartPolicy: Never
+
