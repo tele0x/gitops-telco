@@ -6,4 +6,4 @@ resources:
 - 04-infraenv.yaml
 - job-infraenv-image-status-readiness.yaml
 - 05-bmh.yaml
-#- job-monitor-cluster-install.yaml 
+- job-monitor-cluster-install.yaml 
