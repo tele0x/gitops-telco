@@ -15,7 +15,7 @@ spec:
           - /bin/bash
           - "-c"
           - |
-            /bin/bash <<'EOF'
+            /bin/bash -x <<'EOF'
             # Script to monitor ZTP (Zero Touch Provisioning) cluster installation
             # Author: Federico 'tele' Rossi <ferossi@redhat.com>
             #
@@ -37,15 +37,15 @@ spec:
             logc "Check BareMetalNodes readiness"
             # Wait for BaremetalNodes to be ready and registered
             while [[ $ct -le 10 ]]; do
-              res=`oc get bmh -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | xargs oc get bmh -o jsonpath='{.status.operationalStatus}' {} 2>/dev/null | grep error`
-              if [[ $res -eq "error" ]]; then
+              res=`oc get bmh -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | xargs oc get bmh -o jsonpath='{.status.operationalStatus}' 2>/dev/null | grep error`
+              echo -e "RES: $res"
+              if [ "$res" == "error" ]; then
                 logc "Error detected on BMH:"
                 oc get bmh -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | xargs oc get bmh -o jsonpath='{.status.errorMessage}'
-                echo "\n"
+                echo
               else
                 logc "No errors detected"
                 oc get bmh
-
                 BM_CHECK=1
               fi
 
