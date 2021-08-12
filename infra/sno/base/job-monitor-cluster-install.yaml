@@ -15,7 +15,7 @@ spec:
           - /bin/bash
           - "-c"
           - |
-            /bin/bash <<'EOF'
+            /bin/bash -x <<'EOF'
             # Script to monitor ZTP (Zero Touch Provisioning) cluster installation
             # Author: Federico 'tele' Rossi <ferossi@redhat.com>
             #
@@ -24,12 +24,12 @@ spec:
                 echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt" 
             }
             ct=0
-            install_status=0
+            INSTALL_STATUS=0
 
             # get agent name
-            agent_name=`oc get agentclusterinstall -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
+            AGENT_NAME=`oc get agentclusterinstall -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
             
-            start_date=`date +%s`
+            START_DATE=`date +%s`
             logc "START Cluster monitor install"
             logc "============================="
 
@@ -37,11 +37,11 @@ spec:
             while [[ $ct -le 12 ]]; do
               
               # get install state
-              install_status=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.state}'`
+              INSTALL_STATUS=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.state}'`
               # get install state details
-              install_status_msg=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.stateInfo}'`
+              INSTALL_STATUS_MSG=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.stateInfo}'`
               
-              case $install_status in
+              case $INSTALL_STATUS in
                 
                 insufficient)
                    logc "Cluster has not sufficient requirements to begin the installation"
@@ -53,30 +53,31 @@ spec:
 
                 installing)
                    logc "Installation in progress.."
-                   logc "Status: $install_status_msg"
+                   logc "Status: $INSTALL_STATUS_MSG"
                    ;; 
 
                 installing-pending-user-action)
                    logc "Installation is pending user action, error occured and stopped the install"
-                   logc "Output: $install_status_msg"
+                   logc "Output: $INSTALL_STATUS_MSG"
                    ;;
 
                 finalizing)
-                   oc get agentclusterinstall $agent_name -o jsonpath='{.status.conditions[3].message}'
+                   oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.conditions[3].message}'
+                   ;;
 
                 installed)
                    logc "Cluster successfully installed"
-                   install_status=1
+                   INSTALL_STATUS=1
                    break;
                    ;;
 
                 *)
                    logc "Status unknown"
-                   logc "Output: `oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.stateInfo}'`"
+                   logc "Output: `oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.stateInfo}'`"
                    ;;
               esac
 
-              if [[ $install_status -eq 1 ]]; then
+              if [[ $INSTALL_STATUS -eq 1 ]]; then
                 break;
               fi
 
@@ -87,40 +88,41 @@ spec:
             done
 
             logc "============================="
-            end_date=`date +%s`
-            total_time=`echo $(( $start_date - $end_date )) | awk '{printf "%d:%02d:%02d", $1/3600, ($1/60)%60, $1%60}'`
-            logc "END Cluster monitor install. Total installation time: $total_time"
 
-            if [[ $install_status -eq 1 ]]; then
+            END_DATE=`date +%s`
+            TOTAL_TIME=`echo $(( $START_DATE - $END_DATE )) | awk '{printf "%d:%02d:%02d", $1/3600, ($1/60)%60, $1%60}'`
+            logc "END Cluster monitor install. Total installation time: $TOTAL_TIME"
+
+            if [[ $INSTALL_STATUS -eq 1 ]]; then
               logc "Cluster installation completed, get kubeconfig and kubeadmin password for the cluster"
               
-              kubeconfig_url=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/kubeconfig?\2#g'`
-              kubeadmin_url=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/files?file_name=kubeadmin-password\&\2#g'` 
+              KUBECONFIG_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/kubeconfig?\2#g'`
+              KUBEADMIN_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/files?file_name=kubeadmin-password\&\2#g'` 
               
               # For this PoC we just print the password and kubeconfig in the pod log
               # Other options would be to send Slack notification or an email with the cluster access info
               logc "Kubeadmin password: "
-              curl -k -X GET "$kubeadmin_url" 2>/dev/null
+              curl -k -X GET "$KUBEADMIN_URL" 2>/dev/null
 
               echo -e "\n"
 
               logc "Kubeconfig: "
-              curl -k -X GET "$kubeconfig_url" 2>/dev/null
+              curl -k -X GET "$KUBECONFIG_URL" 2>/dev/null
 
               exit 0
             else
               logc "Send notification cluster installation failed"
               # here we can get the detailed logs to troubleshoot why the cluster install failed
               # cluster events
-              cluster_events=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.eventsURL}'`
+              CLUSTER_EVENTS=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}'`
               # logs. note logs are stored in a tar archive
-              cluster_logs=`oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.logsURL}'`
+              CLUSTER_LOGS=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.logsURL}'`
               
               logc "Get cluster install events"
-              curl -k -X GET "$cluster_events"
+              curl -k -X GET "$CLUSTER_EVENTS"
 
               logc "Get cluster install logs"
-              curl -k -o logs.tar -X GET "$cluster_logs"
+              curl -k -o logs.tar -X GET "$CLUSTER_LOGS"
               tar -xf logs.tar
               tar -zxvf controller_logs.tar.gz
               logc "Install logs:"
