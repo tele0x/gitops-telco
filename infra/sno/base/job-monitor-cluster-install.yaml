@@ -96,18 +96,21 @@ spec:
             if [[ $INSTALL_STATUS -eq 1 ]]; then
               logc "Cluster installation completed, get kubeconfig and kubeadmin password for the cluster"
               
-              KUBECONFIG_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/kubeconfig?\2#g'`
-              KUBEADMIN_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/files?file_name=kubeadmin-password\&\2#g'` 
-              
               # For this PoC we just print the password and kubeconfig in the pod log
               # Other options would be to send Slack notification or an email with the cluster access info
+              # Using curl instead of getting the secrets because there could be multiple clusters deployed in the same namespace
+              KUBECONFIG_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/kubeconfig?\2#g'`
+              KUBEADMIN_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/files?file_name=kubeadmin-password\&\2#g'`
               logc "Kubeadmin password: "
               curl -k -X GET "$KUBEADMIN_URL" 2>/dev/null
-
               echo -e "\n"
-
               logc "Kubeconfig: "
               curl -k -X GET "$KUBECONFIG_URL" 2>/dev/null
+              #logc "Kubeadmin password: "
+              #oc get secret galaxy-mining-edge-site-a-admin-password -o jsonpath='{.data.password}' | base64 --decode
+              #echo -e "\n"
+              #logc "Kubeconfig: "
+              #oc get secret galaxy-mining-edge-site-a-admin-kubeconfig -o jsonpath='{.data.kubeconfig}' | base64 --decode
 
               exit 0
             else
