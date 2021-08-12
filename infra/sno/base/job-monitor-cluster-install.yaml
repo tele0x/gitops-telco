@@ -15,7 +15,7 @@ spec:
           - /bin/bash
           - "-c"
           - |
-            /bin/bash -x <<'EOF'
+            /bin/bash <<'EOF'
             # Script to monitor ZTP (Zero Touch Provisioning) cluster installation
             # Author: Federico 'tele' Rossi <ferossi@redhat.com>
             #
