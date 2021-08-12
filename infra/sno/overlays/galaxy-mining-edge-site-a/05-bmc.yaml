@@ -4,7 +4,7 @@
     infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
 - op: replace
   path: /spec/bmc/address
-  value: redfish-virtualmedia+http://192.168.2.100:8080/redfish/v1/Systems/11c9a225-059f-404a-84dc-a4a84b870f96
+  value: redfish-virtualmedia+http://192.168.2.100:8080/redfish/v1/Systems/c649679a-ea8d-4dd2-9681-eb9475fb4672
 - op: replace
   path: /spec/bmc/credentialsName
   value: edge-site-a-bmc-secret1
