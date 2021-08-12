@@ -16,18 +16,22 @@ spec:
           - "-c"
           - |
             /bin/bash <<'EOF'
+            # Check ISO image creation status
+            # Author: Federico 'tele' Rossi <ferossi@redhat.com>
             function logc() {
                 txt=$1
-                echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt" 
-            }            
+                echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt"
+            } 
+
             ct=0
-            infraenv_name=`oc get infraenv -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
+            INFRAENV_NAME=`oc get infraenv -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
+ 
             while [[ $ct -le 30 ]]; do
-              image_status=`oc get infraenv $infraenv_name -o=jsonpath='{.status.conditions[0].type}'`
+              IMAGE_STATUS=`oc get infraenv $INFRAENV_NAME -o=jsonpath='{.status.conditions[0].type}'`
               logc "Check ISO image creation status..."
-              logc "Output: $image_status" 
+              logc "Output: $IMAGE_STATUS" 
               
-              if [[ "$image_status" == "ImageCreated" ]]; then
+              if [[ "$IMAGE_STATUS" == "ImageCreated" ]]; then
                 logc "ISO Image successfully created"
                 status=1;
                 break;
@@ -38,9 +42,10 @@ spec:
               sleep 10
               ct=$(($ct+1))
             done
+            
             if [[ ${status} -eq 1 ]]; then
               logc "ISO Download URL: "
-              oc get infraenv $infraenv_name -o=jsonpath='{.status.isoDownloadURL}' 
+              oc get infraenv $INFRAENV_NAME -o=jsonpath='{.status.isoDownloadURL}' 
               exit 0
             else
               logc "ISO Image creation failed, send notification.."
