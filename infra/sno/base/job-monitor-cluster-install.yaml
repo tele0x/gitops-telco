@@ -28,19 +28,48 @@ spec:
 
             # get agent name
             AGENT_NAME=`oc get agentclusterinstall -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
-            
+
             START_DATE=`date +%s`
             logc "START Cluster monitor install"
             logc "============================="
 
-            # Wait 1 hour, timeout if cluster installation is not completed in 1 hour
+            BM_CHECK=0
+            logc "Check BareMetalNodes readiness"
+            # Wait for BaremetalNodes to be ready and registered
+            while [[ $ct -le 10 ]]; do
+              res=`oc get bmh -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | xargs oc get bmh -o jsonpath='{.status.operationalStatus}' {} 2>/dev/null | grep error`
+              if [[ $res -eq "error" ]]; then
+                logc "Error detected on BMH:"
+                oc get bmh -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | xargs oc get bmh -o jsonpath='{.status.errorMessage}'
+                echo "\n"
+              else
+                logc "No errors detected"
+                oc get bmh
+
+                BM_CHECK=1
+              fi
+
+              if [[ $BM_CHECK -eq 1 ]]; then
+                break;
+              fi
+             
+              # wait 1 minute
+              logc "Waiting to check baremetal nodes status.."
+              sleep 60
+              ct=$(($ct+1))
+            done
+            logc "Baremetal nodes ready for installation!"
+
+            # reset counter
+            ct=0
+            # Give 1 hour for install time, timeout if cluster installation is not completed in 1 hour
             while [[ $ct -le 12 ]]; do
               
               # get install state
               INSTALL_STATUS=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.state}'`
               # get install state details
               INSTALL_STATUS_MSG=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.stateInfo}'`
-              
+
               case $INSTALL_STATUS in
                 
                 insufficient)
