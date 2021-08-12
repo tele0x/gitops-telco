@@ -62,7 +62,7 @@ spec:
                    ;;
 
                 finalizing)
-                   oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.conditions[3].message}'
+                   logc "`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.conditions[3].message}'`"
                    ;;
 
                 installed)

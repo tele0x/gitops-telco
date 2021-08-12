@@ -18,14 +18,25 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+
   ignoreDifferences:
   - group: agent-install.openshift.io
     kind: InfraEnv
     jsonPointers:
     - /spec/agentLabelSelector
+
+  # For SNO install apiVIP and ingressVIP are not needed, need to be ignored
   ignoreDifferences:
   - group: extensions.hive.openshift.io
     kind: AgentClusterInstall
     jsonPointers:
     - /spec/apiVIP
     - /spec/ingressVIP
+  
+  # while cluster is installing the field 'installed' on ClusterDeployment is 'false' and switch to 'true'
+  # this will ignore the field and consider the ClusterDeployment sync
+  ignoreDifferences:
+  - group: hive.openshift.io
+    kind: ClusterDeployment
+    jsonPointers:
+    - /spec/installed  
