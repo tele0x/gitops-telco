@@ -16,15 +16,20 @@ spec:
           - "-c"
           - |
             /bin/bash <<'EOF'
+            # Script to monitor ZTP (Zero Touch Provisioning) cluster installation
+            # Author: Federico 'tele' Rossi <ferossi@redhat.com>
+            #
             function logc() {
                 txt=$1
                 echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt" 
             }
             ct=0
             install_status=0
+
             # get agent name
             agent_name=`oc get agentclusterinstall -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
             
+            start_date=`date +%s`
             logc "START Cluster monitor install"
             logc "============================="
 
@@ -56,6 +61,9 @@ spec:
                    logc "Output: $install_status_msg"
                    ;;
 
+                finalizing)
+                   oc get agentclusterinstall $agent_name -o jsonpath='{.status.conditions[3].message}'
+
                 installed)
                    logc "Cluster successfully installed"
                    install_status=1
@@ -63,7 +71,7 @@ spec:
                    ;;
 
                 *)
-                   logc "Status unknow"
+                   logc "Status unknown"
                    logc "Output: `oc get agentclusterinstall $agent_name -o jsonpath='{.status.debugInfo.stateInfo}'`"
                    ;;
               esac
@@ -79,7 +87,9 @@ spec:
             done
 
             logc "============================="
-            logc "END Cluster monitor install"
+            end_date=`date +%s`
+            total_time=`echo $(( $start_date - $end_date )) | awk '{printf "%d:%02d:%02d", $1/3600, ($1/60)%60, $1%60}'`
+            logc "END Cluster monitor install. Total installation time: $total_time"
 
             if [[ $install_status -eq 1 ]]; then
               logc "Cluster installation completed, get kubeconfig and kubeadmin password for the cluster"
@@ -124,4 +134,3 @@ spec:
         name: monitor-cluster-install
         image: registry.redhat.io/openshift4/ose-cli
       restartPolicy: Never
-

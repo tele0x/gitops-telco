@@ -1,6 +1,6 @@
 - op: replace
   path: /spec/clusterRef/name
-  value: galaxy-mining-edge-site-a-deployment
+  value: galaxy-mining-edge-site-a
 - op: replace
   path: /spec/clusterRef/namespace
   value: galaxy-mining

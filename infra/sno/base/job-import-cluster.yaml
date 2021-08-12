@@ -1,0 +1,97 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-import-managed-cluster
+  namespace: galaxy-mining
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: "8"
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+          - /bin/bash
+          - "-c"
+          - |
+            /bin/bash <<'EOF'
+            # Import deployed cluster 
+            # Author: Federico 'tele' Rossi <ferossi@redhat.com>
+            function logc() {
+                txt=$1
+                echo -e "[`date '+%m-%-d-%Y %H:%M:%S'`] $txt" 
+            }
+
+            logc "START Cluster import"
+            logc "============================="
+            logc "Get cluster name"
+            AGENT_NAME=`oc get agentclusterinstall -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'`
+            CLUSTER_NAME=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.spec.clusterDeploymentRef.name}'`
+
+            logc "Cluster: $CLUSTER_NAME"
+            logc "Create NS and label"
+            oc create ns $CLUSTER_NAME
+            oc label namespace $CLUSTER_NAME cluster.open-cluster-management.io/managedCluster=$CLUSTER_NAME
+
+            logc "Create ManagedCluster"
+            cat <<_MANIFEST_ | oc apply -f -
+            apiVersion: cluster.open-cluster-management.io/v1
+            kind: ManagedCluster
+            metadata:
+              name: ${CLUSTER_NAME}
+              namespace: ${CLUSTER_NAME}
+            spec:
+              hubAcceptsClient: true
+            _MANIFEST_
+                
+            logc "Create KlusterletAddonConfig"
+            #cat <<_MANIFEST_ > /tmp/klusterletaddon.yaml
+            cat <<_MANIFEST_ | oc apply -f -
+            apiVersion: agent.open-cluster-management.io/v1
+            kind: KlusterletAddonConfig
+            metadata:
+              name: ${CLUSTER_NAME}
+              namespace: ${CLUSTER_NAME}
+            spec:
+              clusterName: ${CLUSTER_NAME}
+              clusterNamespace: ${CLUSTER_NAME}
+              applicationManager:
+                enabled: true
+              certPolicyController:
+                enabled: true
+              clusterLabels:
+                cloud: auto-detect
+                vendor: auto-detect
+              iamPolicyController:
+                enabled: true
+              policyController:
+                enabled: true
+              searchCollector:
+                enabled: true
+            version: 2.2.0
+            _MANIFEST_
+
+            logc "Get manifests to load on the managed cluster"
+            oc get secret ${CLUSTER_NAME}-import -n $CLUSTER_NAME -o jsonpath={.data.crds\\.yaml} | base64 --decode > /tmp/klusterlet-crd.yaml
+            oc get secret ${CLUSTER_NAME}-import -n $CLUSTER_NAME -o jsonpath={.data.import\\.yaml} | base64 --decode > /tmp/import.yaml
+            
+            logc "Load kubeconfig for managed cluster"
+            KUBECONFIG_URL=`oc get agentclusterinstall $AGENT_NAME -o jsonpath='{.status.debugInfo.eventsURL}' | sed -e 's#\(.*\)/events?\(.*\)#\1/downloads/kubeconfig?\2#g'`
+            curl -k -X GET "$KUBECONFIG_URL" -o /tmp/kubeconfig
+            export KUBECONFIG=/tmp/kubeconfig
+           
+
+            logc "Apply klusterlet CRD and import"
+            oc apply -f /tmp/klusterlet-crd.yaml
+            oc apply -f /tmp/import.yaml
+
+            logc "Done! Cluster should be imported and ready to be managed by ACM"
+            logc "============================="
+            logc "END Cluster import"
+
+            EOF
+        name: import-managed-cluster
+        image: registry.redhat.io/openshift4/ose-cli
+      restartPolicy: Never
+

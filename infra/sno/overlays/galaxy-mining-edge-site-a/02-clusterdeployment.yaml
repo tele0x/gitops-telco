@@ -1,6 +1,6 @@
 - op: replace
   path: /metadata/name
-  value: galaxy-mining-edge-site-a-deployment
+  value: galaxy-mining-edge-site-a
 - op: replace
   path: /spec/baseDomain
   value: telco5glab.us
