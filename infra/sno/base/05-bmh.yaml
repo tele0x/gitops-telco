@@ -6,7 +6,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "6"
     inspect.metal3.io: disabled
-    bmac.agent-install.openshift.io/hostname: "edgesno001"
   labels:
     infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
 spec:

@@ -2,6 +2,13 @@
   path: /metadata/labels
   value: 
     infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
+
+# Set baremetal node hostname
+- op: add
+  path: "/metadata/annotations/bmac.agent-install.openshift.io/hostname"
+  value: edgesno001
+
+# Configure BMC
 - op: replace
   path: /spec/bmc/address
   value: redfish-virtualmedia+http://192.168.2.100:8080/redfish/v1/Systems/c649679a-ea8d-4dd2-9681-eb9475fb4672
