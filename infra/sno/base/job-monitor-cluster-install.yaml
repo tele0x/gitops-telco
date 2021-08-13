@@ -74,6 +74,9 @@ spec:
                 
                 insufficient)
                    logc "Cluster has not sufficient requirements to begin the installation"
+                   logc "NOTE: It usually means the host validation is not completed." 
+                   logc "      Agent still has to register to AI or it's registered and validation is failing."
+                   logc "      Give it some time and then check manually agentclusterinstall for any error"
                    ;;
 
                 preparing-for-installation)
