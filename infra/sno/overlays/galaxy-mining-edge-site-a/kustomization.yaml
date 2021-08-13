@@ -1,5 +1,5 @@
 bases:
-- ../../base
+- ../../base_baremetal
 
 # set namespace and name prefix
 namespace: galaxy-mining
