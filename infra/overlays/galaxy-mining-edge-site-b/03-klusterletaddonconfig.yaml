@@ -1,0 +1,9 @@
+- op: replace
+  path: /metadata/name
+  value: galaxy-mining-edge-site-b
+- op: replace
+  path: /spec/clusterName
+  value: galaxy-mining-edge-site-b
+- op: replace
+  path: /spec/clusterNamespace
+  value: galaxy-mining-edge-site-b

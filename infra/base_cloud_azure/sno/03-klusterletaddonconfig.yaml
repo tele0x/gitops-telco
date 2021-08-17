@@ -1,0 +1,21 @@
+apiVersion: agent.open-cluster-management.io/v1
+kind: KlusterletAddonConfig
+metadata:
+  name: galaxy-mining-edge-site-b
+  namespace: galaxy-mining-edge-site-b
+spec:
+  applicationManager:
+    enabled: true
+  certPolicyController:
+    enabled: true
+  clusterLabels:
+    cloud: Azure
+    vendor: OpenShift
+  clusterName: galaxy-mining-edge-site-b
+  clusterNamespace: galaxy-mining-edge-site-b
+  iamPolicyController:
+    enabled: true
+  policyController:
+    enabled: true
+  searchCollector:
+    enabled: true

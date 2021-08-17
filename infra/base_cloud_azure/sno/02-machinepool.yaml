@@ -1,0 +1,21 @@
+apiVersion: hive.openshift.io/v1
+kind: MachinePool
+metadata:
+  name: galaxy-mining-edge-site-b-worker
+  namespace: galaxy-mining-edge-site-b
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  name: worker
+  clusterDeploymentRef:
+    name: galaxy-mining-edge-site-b
+  platform:
+    azure:
+      osDisk:
+        diskSizeGB: 128
+      type: Standard_D8s_v3
+      zones:
+        - '1'
+        - '2'
+        - '3'
+  replicas: 0

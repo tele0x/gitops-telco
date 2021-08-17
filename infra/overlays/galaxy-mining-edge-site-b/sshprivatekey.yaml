@@ -1,0 +1,6 @@
+- op: replace
+  path: /data/ssh-privatekey
+  value: "<BASE64-ENCODED-SSH-PRIVATE-KEY>"
+- op: replace
+  path: /data/ssh-publickey 
+  value: "<BASE64-ENCODED-SSH-PUBLIC-KEY>" 

@@ -1,0 +1,33 @@
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  name: galaxy-mining-edge-site-b
+  namespace: galaxy-mining-edge-site-b
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  labels:
+    cloud: Azure
+    region: eastus
+    vendor: OpenShift
+spec:
+  baseDomain: telco5g-azure.com
+  clusterName: galaxy-mining-edge-site-b
+  controlPlaneConfig:
+    servingCertificates: {}
+  installAttemptsLimit: 1
+  installed: false
+  platform:
+    azure:
+      baseDomainResourceGroupName: azure-telco5g
+      credentialsSecretRef:
+        name: galaxy-mining-edge-site-b-azure-creds
+      region: eastus
+  provisioning:
+    imageSetRef:
+      name: img4.8.4-x86-64-appsub
+    installConfigSecretRef:
+      name: galaxy-mining-edge-site-b-install-config
+    sshPrivateKeySecretRef:
+      name: galaxy-mining-edge-site-b-ssh-private-key
+  pullSecretRef:
+    name: galaxy-mining-edge-site-b-pull-secret

@@ -1,0 +1,14 @@
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  name: galaxy-mining-edge-site-b
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  labels:
+    name: galaxy-mining-edge-site-b
+    app: 5gcore
+    cloud: Azure
+    region: eastus
+    vendor: OpenShift
+spec:
+  hubAcceptsClient: true

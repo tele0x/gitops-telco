@@ -1,0 +1,9 @@
+resources:
+- pullsecret.yaml
+- sshprivatekey.yaml
+- credentials.yaml
+- installconfig.yaml
+- 00-clusterdeployment.yaml
+- 01-managedcluster.yaml
+- 02-machinepool.yaml
+- 03-klusterletaddonconfig.yaml

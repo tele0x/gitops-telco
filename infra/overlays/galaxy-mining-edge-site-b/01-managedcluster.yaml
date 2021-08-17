@@ -1,0 +1,11 @@
+- op: replace
+  path: /metadata/name
+  value: galaxy-mining-edge-site-b
+- op: replace
+  path: /metadata/labels/name
+  value: galaxy-mining-edge-site-b
+- op: replace
+  path: /metadata/labels/region
+  value: eastus
+
+

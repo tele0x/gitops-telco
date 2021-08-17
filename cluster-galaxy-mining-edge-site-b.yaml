@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: galaxy-mining-edge-site-b
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: galaxy-mining-edge-site-b
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: infra/overlays/galaxy-mining-edge-site-b
+    repoURL: http://192.168.2.100:3000/tele/gitops-telco
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+  # while cluster is installing the field 'installed' on ClusterDeployment is 'false' and switch to 'true'
+  # this will ignore the field and consider the ClusterDeployment sync
+  ignoreDifferences:
+  - group: hive.openshift.io
+    kind: ClusterDeployment
+    namespace: galaxy-mining-edge-site-b
+    jsonPointers:
+    - /spec/installed  

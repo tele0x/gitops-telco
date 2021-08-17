@@ -1,0 +1,41 @@
+bases:
+- ../../base_cloud_azure/sno
+
+# set namespace and name prefix
+namespace: galaxy-mining-edge-site-b
+#namePrefix: edge-site-b
+
+# replace fields in config files as needed
+patchesJson6902:
+- target:
+    version: v1
+    kind: Secret
+    name: galaxy-mining-edge-site-b-pull-secret
+  path: pullsecret.yaml
+- target:
+    version: v1
+    kind: Secret
+    name: galaxy-mining-edge-site-b-ssh-private-key
+  path: sshprivatekey.yaml
+- target:
+    version: v1
+    kind: Secret
+    name: galaxy-mining-edge-site-b-azure-creds
+  path: credentials.yaml
+- target:
+    version: v1
+    kind: Secret
+    name: galaxy-mining-edge-site-b-install-config
+  path: installconfig.yaml
+- target:
+    group: hive.openshift.io
+    version: v1
+    kind: ClusterDeployment
+    name: galaxy-mining-edge-site-b
+  path: 00-clusterdeployment.yaml
+- target:
+    group: hive.openshift.io
+    version: v1
+    kind: MachinePool
+    name: galaxy-mining-edge-site-b-worker
+  path: 02-machinepool.yaml
