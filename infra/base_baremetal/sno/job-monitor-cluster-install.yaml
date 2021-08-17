@@ -15,7 +15,7 @@ spec:
           - /bin/bash
           - "-c"
           - |
-            /bin/bash -x <<'EOF'
+            /bin/bash <<'EOF'
             # Script to monitor ZTP (Zero Touch Provisioning) cluster installation
             # Author: Federico 'tele' Rossi <ferossi@redhat.com>
             #
@@ -122,7 +122,8 @@ spec:
             logc "============================="
 
             END_DATE=`date +%s`
-            TOTAL_TIME=`echo $(( $START_DATE - $END_DATE )) | awk '{printf "%d:%02d:%02d", $1/3600, ($1/60)%60, $1%60}'`
+            logc "START_DATE: $START_DATE"
+            TOTAL_TIME=`echo $(( $END_DATE - $START_DATE )) | awk '{printf "%d:%02d:%02d", $1/3600, ($1/60)%60, $1%60}'`
             logc "END Cluster monitor install. Total installation time: $TOTAL_TIME"
 
             if [[ $INSTALL_STATUS -eq 1 ]]; then

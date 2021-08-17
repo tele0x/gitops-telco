@@ -5,12 +5,12 @@ metadata:
   namespace: openshift-gitops
 spec:
   destination:
-    namespace: galaxy-mining
+    namespace: galaxy-mining-edge-site-a
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: infra/sno/overlays/galaxy-mining-edge-site-a
-    repoURL: https://github.com/tele0x/gitops-telco
+    path: infra/overlays/galaxy-mining-edge-site-a
+    repoURL: http://192.168.2.100:3000/tele/gitops-telco
     targetRevision: master
   syncPolicy:
     automated:

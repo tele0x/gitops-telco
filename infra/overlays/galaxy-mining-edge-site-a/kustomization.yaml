@@ -1,8 +1,8 @@
 bases:
-- ../../base_baremetal
+- ../../base_baremetal/sno
 
 # set namespace and name prefix
-namespace: galaxy-mining
+namespace: galaxy-mining-edge-site-a
 namePrefix: edge-site-a-
 
 # generate secret for BMC access

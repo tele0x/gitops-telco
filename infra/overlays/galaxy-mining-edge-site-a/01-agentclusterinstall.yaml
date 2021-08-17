@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/clusterDeploymentRef/name
+  value: galaxy-mining-edge-site-a
+- op: replace
+  path: /spec/sshPublicKey
+  value: "<SSH-PUBLIC-KEY>"

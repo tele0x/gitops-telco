@@ -1,0 +1,9 @@
+- op: replace
+  path: /spec/clusterRef/name
+  value: galaxy-mining-edge-site-a
+- op: replace
+  path: /spec/clusterRef/namespace
+  value: galaxy-mining-edge-site-a
+- op: replace
+  path: /spec/sshAuthorizedKey
+  value: "<SSH-PRIVATE-KEY>"

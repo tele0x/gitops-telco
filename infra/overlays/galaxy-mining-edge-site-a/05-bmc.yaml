@@ -2,7 +2,6 @@
   path: /metadata/labels
   value: 
     infraenvs.agent-install.openshift.io: "edge-site-a-ocpsnospoke-env"
-
 # Set baremetal node hostname
 - op: replace
   # ~1 represent a / in jsonPatch
